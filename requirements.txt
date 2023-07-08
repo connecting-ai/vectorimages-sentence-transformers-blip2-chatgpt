@@ -1,0 +1,4 @@
+PIL
+sentence_transformers
+numpy
+fastapi
