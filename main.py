@@ -6,12 +6,20 @@ import os
 from zipfile import ZipFile
 from clip import run
 import shutil
+import pydrive
+import drive
+
+drive.initGDrive()
 
 CHUNK_SIZE = 1024 * 1024  # adjust the chunk size as desired
 app = FastAPI()
+main_path = "all_images/"
+
+if not os.path.exists(main_path):
+    os.mkdir(main_path)
 
 @app.post("/query")
-async def upload(file: UploadFile = File(...), query: str = Form(...)):
+async def upload(file: UploadFile = File(...), query: str = Form(...), search_all: str = Form(...)):
     datetimenow_timestamp = datetime.datetime.now().timestamp()
     images_path = "images_" + str(datetimenow_timestamp) + '/'
     current_path = os.path.dirname(os.path.realpath(__file__))
@@ -22,12 +30,30 @@ async def upload(file: UploadFile = File(...), query: str = Form(...)):
             
     with ZipFile(filepath, 'r') as zipObj:
         zipObj.extractall(images_path)
+
+    with ZipFile(filepath, 'r') as zipObj:
+        zipObj.extractall(main_path)
     
     os.remove(filepath)
-    result = run(images_path + "*", query)
+    result = []
+    if search_all: 
+        result = run(main_path + "*", query)
+    else:
+        result = run(images_path + "*", query)
+
     shutil.rmtree(images_path)
 
     return result
+
+@app.get("/query")
+async def query(query: str):
+    result = run(main_path + "*", query)
+    return result
+
+@app.get("/query_drive")
+async def query_drive(query: str, folder_name: str):
+    result = drive.quiery(query, folder_name)
+    return result   
 
 if __name__ == "__main__":
     import uvicorn
