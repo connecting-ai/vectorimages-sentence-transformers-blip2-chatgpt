@@ -2,10 +2,9 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import os
 import shutil
-import zipfile
-import requests
 import datetime
 from clip import run
+import base64
 
 gauth = None
 drive_id = "1ddfF-WwTx4anjp4P2w1fzd87xSACkYs3"
@@ -35,5 +34,14 @@ def quiery(query: str, folder_name: str):
                     file2.GetContentFile(os.path.join(temp_path, file2['title']))
 
     results = run(temp_path + "/*", query)
+    
+    images = []
+    for res in results:
+        base_path = temp_path
+        imgPath = base_path + res
+        with open(imgPath, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+            images.append(encoded_string.decode('utf-8'))
+
     shutil.rmtree(temp_path)
-    return results
+    return images

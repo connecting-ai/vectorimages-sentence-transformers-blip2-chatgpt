@@ -38,6 +38,7 @@ def find_top_N_matches(text_emb, image_embeds, N, image_filenames):
     return top_image_filenames
 
 def run(path, input):
+    print(path)
     [image_embeds, image_filenames] = encode_images_from_directory(path ,model)
     text_emb = encode_text_description(input, model)
     top_image_filenames = find_top_N_matches(text_emb, image_embeds, 5, image_filenames)
