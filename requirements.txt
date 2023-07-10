@@ -1,5 +1,5 @@
-PIL
 sentence_transformers
 numpy
 fastapi
 pydrive
+Pillow
