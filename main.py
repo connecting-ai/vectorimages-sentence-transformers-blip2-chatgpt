@@ -1,3 +1,6 @@
+import envReader
+envReader.read()
+
 import datetime
 from fastapi import FastAPI, File, Form, UploadFile
 import aiofiles
@@ -5,11 +8,15 @@ import os
 from zipfile import ZipFile
 from clip import run
 import shutil
-import drive
 import base64
 
-drive.initGDrive()
+if envReader.getBool('USE_GDRIVE'):
+    import drive
+    drive.initGDrive()
 
+if not os.path.exists('images'):
+    os.mkdir('images')
+    
 CHUNK_SIZE = 1024 * 1024  # adjust the chunk size as desired
 app = FastAPI()
 
@@ -27,7 +34,6 @@ async def upload(file: UploadFile = File(...), query: str = Form(...)):
         zipObj.extractall(images_path)
     
     os.remove(filepath)
-    result = []
     result = run(images_path + "*", query)
 
     images = []
@@ -41,10 +47,29 @@ async def upload(file: UploadFile = File(...), query: str = Form(...)):
     shutil.rmtree(images_path)
     return images
 
+@app.get("/query_local")
+async def query_local(query: str, folder_name: str):
+    path = "images/" + folder_name + "/"
+    result = run(path + "*", query)
+    
+    images = []
+    for res in result:
+        base_path = path
+        imgPath = base_path + res
+        with open(imgPath, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+            images.append(encoded_string.decode('utf-8'))
+    
+    return images
+    
 @app.get("/query_drive")
 async def query_drive(query: str, folder_name: str):
-    result = drive.quiery(query, folder_name)
-    return result   
+    if envReader.getBool('USE_GDRIVE'):
+        import drive
+        result = drive.quiery(query, folder_name)
+        return result   
+    else:
+        return []
 
 if __name__ == "__main__":
     import uvicorn
