@@ -61,6 +61,12 @@ async def query_local(query: str, folder_name: str):
             images.append(encoded_string.decode('utf-8'))
     
     return images
+
+@app.get("/get_images")
+async def query_images(query: str, folder_name: str):
+    path = "images/" + folder_name + "/"
+    result = run(path + "*", query)
+    return result
     
 @app.get("/query_drive")
 async def query_drive(query: str, folder_name: str):
