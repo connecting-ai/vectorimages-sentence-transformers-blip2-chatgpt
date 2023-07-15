@@ -161,3 +161,4 @@ cython_debug/
 
 all_images/*
 client_secrets.json
+images_input/*
