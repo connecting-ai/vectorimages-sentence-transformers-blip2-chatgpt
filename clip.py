@@ -3,6 +3,8 @@ from PIL import Image
 import glob
 import numpy as np
 import os
+import pickledb
+db = pickledb.load('/db/clip.db', False)
 
 #these functions are to 
 # encode a directory full of images as vectors, 
@@ -10,7 +12,21 @@ import os
 # and then use those encodings to find the images in the directory that best match that text description.
 
 # Load CLIP model. We only want to do this once.
-model = SentenceTransformer('clip-ViT-B-32')
+model = SentenceTransformer(model_name_or_path='clip-ViT-B-32', device='cuda:0')
+
+def encodeCacheImage(f):
+    value = db.get(f)
+
+    try:
+        if not value:
+            print("Not found from DB")
+            value = model.encode(Image.open(f))
+            db.set(f, value)
+    except:
+        if value is not None:
+            print("PICKED from DB")
+
+    return value
 
 def encode_images_from_directory(directory, model):
     #creates one vector representing the content of each image in the directory
@@ -18,7 +34,8 @@ def encode_images_from_directory(directory, model):
     image_filenames = []
 
     for f in glob.iglob(directory):
-        img_emb = model.encode(Image.open(f))
+
+        img_emb = encodeCacheImage(f)
         image_embeds.append(img_emb)
         image_filenames.append(f)
     return [image_embeds, image_filenames]

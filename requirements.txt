@@ -3,3 +3,6 @@ numpy
 fastapi
 pydrive
 Pillow
+python-multipart
+aiofiles
+pickledb
