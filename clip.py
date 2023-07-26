@@ -12,7 +12,7 @@ db = pickledb.load('/db/clip.db', False)
 # and then use those encodings to find the images in the directory that best match that text description.
 
 # Load CLIP model. We only want to do this once.
-model = SentenceTransformer(model_name_or_path='clip-ViT-B-32', device='cuda:0')
+model = SentenceTransformer(model_name_or_path='sentence-transformers/clip-ViT-B-32', device='cuda:0')
 
 def encodeCacheImage(f):
     value = db.get(f)
