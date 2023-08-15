@@ -47,6 +47,7 @@ def encode_text_description(text, model):
 
 def find_top_N_matches(text_emb, image_embeds, N, image_filenames):
     # Compute cosine similarities
+    print(image_filenames)
     cos_scores = util.cos_sim(text_emb, image_embeds)
     cos_scores = cos_scores.flatten()
     sorted_indices = np.argsort(cos_scores)
