@@ -14,5 +14,5 @@ for folder in os.listdir(input_path):
     for file in os.listdir(input_path + folder):
         print(file)
         prevFileName = file
-        file = file.replace(" ", "_").lower().strip()
+        file = file.replace(" ", "_").replace("-", "_").replace("(", "").replace(")", "").lower().strip()
         shutil.copy(input_path + folder + "/" + prevFileName, output_path + folder + "/" + file)
