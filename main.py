@@ -9,6 +9,7 @@ from zipfile import ZipFile
 from clip import run
 import shutil
 import base64
+import random
 
 if envReader.getBool('USE_GDRIVE'):
     import drive
@@ -66,8 +67,11 @@ async def query_local(query: str, folder_name: str):
 async def query_images(query: str, folder_name: str):
     path = "images/" + folder_name + "/"
     result = run(path + "*", query)
-    return result
-    
+    image_path = result[0] #random.choice(result)
+    with open(path + image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+        b64 = encoded_string.decode('utf-8')
+        return b64
 @app.get("/query_drive")
 async def query_drive(query: str, folder_name: str):
     if envReader.getBool('USE_GDRIVE'):
