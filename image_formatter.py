@@ -1,5 +1,6 @@
 import os
 import shutil
+from image_processor import cleanImage
 
 input_path = "images_input/"
 output_path = "images/"
@@ -15,4 +16,7 @@ for folder in os.listdir(input_path):
         print(file)
         prevFileName = file
         file = file.replace(" ", "_").replace("-", "_").replace("(", "").replace(")", "").lower().strip()
-        shutil.copy(input_path + folder + "/" + prevFileName, output_path + folder + "/" + file)
+        input_file_name = input_path + folder + "/" + prevFileName
+        output_file_name = output_path + folder + "/" + file
+        img = cleanImage(input_file_name)
+        img.save(output_file_name)
