@@ -20,7 +20,9 @@ def encodeCacheImage(f):
     try:
         if not value:
             print("Not found from DB")
-            value = model.encode(Image.open(f))
+            img = Image.open(f)
+            img = img.resize((224, 224), Image.NEAREST)
+            value = model.encode(Image.open(f))            
             db.set(f, value)
     except:
         if value is not None:
