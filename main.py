@@ -10,6 +10,9 @@ from clip import run
 import shutil
 import base64
 import random
+from PIL import Image
+import io
+from image_processor import resize_image
 
 if envReader.getBool('USE_GDRIVE'):
     import drive
@@ -64,7 +67,7 @@ async def query_local(query: str, folder_name: str):
     return images
 
 @app.get("/get_images")
-async def query_images(query: str, folder_name: str, randomize: bool):
+async def query_images(query: str, folder_name: str, randomize: bool, width: int, height: int):
     path = "images/" + folder_name + "/"
     result = run(path + "*", query)
     image_path = result[0]
@@ -73,6 +76,13 @@ async def query_images(query: str, folder_name: str, randomize: bool):
     with open(path + image_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
         b64 = encoded_string.decode('utf-8')
+        if width > -1 and height > -1:
+            img = Image.open(io.BytesIO(base64.b64decode(b64)))
+            resized_img = resize_image(img, width, height)
+            print("resizing to: " + str(width) + "x" + str(height) + " resized: " + str(resized_img.size))
+            buffered = io.BytesIO()
+            resized_img.save(buffered, format="PNG")
+            b64 = base64.b64encode(buffered.getvalue())
         return b64
 @app.get("/query_drive")
 async def query_drive(query: str, folder_name: str):

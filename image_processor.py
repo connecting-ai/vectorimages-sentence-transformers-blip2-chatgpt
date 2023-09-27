@@ -47,3 +47,14 @@ def cleanImage(imgPath):
     img = cutWhiteLeft(img)
     img = cutWhiteRight(img)
     return img
+
+def resize_image(img, width, height):
+    if width == 0 and height == 0:
+        (width, height) = img.size
+        width //= 2
+        height //= 2
+        
+    new_width = width
+    new_height = height
+    resized_img = img.resize((new_width, new_height), Image.LANCZOS)
+    return resized_img
