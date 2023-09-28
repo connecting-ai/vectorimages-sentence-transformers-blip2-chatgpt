@@ -71,8 +71,6 @@ async def query_images(query: str, folder_name: str, randomize: bool, width: int
     path = "images/" + folder_name + "/"
     result = run(path + "*", query)
     image_path = result[0]
-    if randomize:
-        image_path = random.choice(result)
     with open(path + image_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
         b64 = encoded_string.decode('utf-8')
