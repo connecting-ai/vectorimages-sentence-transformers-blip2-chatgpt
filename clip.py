@@ -54,6 +54,11 @@ def find_top_N_matches(text_emb, image_embeds, N, image_filenames):
               #check if it is a numy sequence
         if not isinstance(image_embeds[i], np.ndarray):
             print("not a numpy array - ", image_filenames[i])
+            #remove both the image and the vector
+            image_filenames.pop(i)
+            image_embeds.pop(i)
+            continue
+        #check if the vector is the right size
     cos_scores = util.cos_sim(text_emb, image_embeds)
     cos_scores = cos_scores.flatten()
     sorted_indices = np.argsort(cos_scores)
