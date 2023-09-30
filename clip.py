@@ -50,6 +50,10 @@ def encode_text_description(text, model):
 def find_top_N_matches(text_emb, image_embeds, N, image_filenames):
     # Compute cosine similarities
     print(image_filenames)
+    for i in range(len(image_embeds)):
+              #check if it is a numy sequence
+        if not isinstance(image_embeds[i], np.ndarray):
+            print("not a numpy array - ", image_filenames[i])
     cos_scores = util.cos_sim(text_emb, image_embeds)
     cos_scores = cos_scores.flatten()
     sorted_indices = np.argsort(cos_scores)
