@@ -94,6 +94,14 @@ async def query_drive(query: str, folder_name: str):
     else:
         return []
 
+@app.get('/healthz', status_code=200, response_model=dict)
+async def healthz():
+    """"
+    Health check endpoint required for Kubernetes LB periodic pings
+    """
+    return {'status': 'OK'}
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=7777)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

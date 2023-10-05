@@ -6,3 +6,4 @@ Pillow
 python-multipart
 aiofiles
 pickledb
+uvicorn
