@@ -31,7 +31,8 @@ async def upload(file: UploadFile = File(...), query: str = Form(...)):
     current_path = os.path.dirname(os.path.realpath(__file__))
     filepath = os.path.join(current_path, os.path.basename(file.filename))
     async with aiofiles.open(filepath, 'wb') as f:
-        while chunk := await file.read(CHUNK_SIZE):
+        chunk = await file.read(CHUNK_SIZE)
+        while chunk:
             await f.write(chunk)
             
     with ZipFile(filepath, 'r') as zipObj:
